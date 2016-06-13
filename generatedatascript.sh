@@ -1,14 +1,12 @@
 #!/bin/sh
 
-cd ~
-cd Documents/TAO/DeepEGG/EEG/
+cd .
 
-
-for ((j=0.01; j <= 10000; j = j*10)) 
+for ((j=1; j <= 10000; j = j*10)) 
 do
 	for ((i=1; i <= 56; i++))
 	do
-		echo "$i"
+		echo "$((j/10))"
 		th eegdann.lua -hiddenLayerUnits "$i" -domainLambda "$j"
 	done
 done
