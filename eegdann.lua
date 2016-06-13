@@ -17,7 +17,7 @@ if not opt then
    cmd:option('-seed', 0, 'random seed')
    cmd:option('-saveModel', false, 'flag for saving the model on disk at each epoch, if improvement')
    cmd:option('-save', 'results', 'subdirectory to save/log experiments in')
-   cmd:option('-hiddenLayerUnits', 4 , 'Number of hidden layer units')
+   cmd:option('-hiddenLayerUnits', 56 , 'Number of hidden layer units')
    cmd:text()
    opt = cmd:parse(arg or {})
 end
@@ -78,7 +78,7 @@ featExtractor = nn.Sequential()
 featExtractor:add(nn.Linear(nInputEEG,opt.hiddenLayerUnits))
 -- featExtractor:add(nn.Sigmoid())
 -- featExtractor:add(nn.Linear(5,opt.hiddenLayerUnits))
-featExtractor:add(nn.Sigmoid())
+featExtractor:add(nn.ReLU())
 -- featExtractor:add(nn.Linear(5,5))
 
 -- Definition of the decoder
@@ -86,13 +86,13 @@ labelPredictor = nn.Sequential()
 labelPredictor:add(nn.Linear(opt.hiddenLayerUnits,nInputEEG))
 -- labelPredictor:add(nn.Sigmoid())
 -- labelPredictor:add(nn.Linear(5,nInputEEG))
-labelPredictor:add(nn.Sigmoid())
+labelPredictor:add(nn.ReLU())
 
 -- Definition of the domain classifier
 domainClassifier = nn.Sequential()
 domainClassifier:add(nn.GradientReversal(opt.domainLambda))
 domainClassifier:add(nn.Linear(opt.hiddenLayerUnits,1))
-domainClassifier:add(nn.Sigmoid())
+domainClassifier:add(nn.ReLU())
 -- domainClassifier:add(nn.LogSoftMax())
 
 
@@ -111,9 +111,13 @@ params:narrow(1,featExtractorParams:size(1)+labelPredictorParams:size(1),domainC
 gradParams = torch.Tensor(featExtractorParams:size(1)+labelPredictorParams:size(1)+domainClassifierParams:size(1))
 --
 
+featExtractorParams = torch.ones(featExtractorParams:size())
+labelPredictorParams = torch.ones(labelPredictorParams:size())
+domainClassifierParams = torch.ones(domainClassifierParams:size())
+
 print("feat " .. tostring(featExtractorParams:size()))
 print("label " .. tostring(labelPredictorParams:size()))
-print("domain " .. tostring(domainClassifierParams:size()))
+print("domain " .. tostring(domainClassifierParams))
 
 
 
@@ -252,7 +256,7 @@ for i = 1,opt.maxEpoch do
    train()
 
    if i == opt.maxEpoch then
-      file = csvigo.load("exp3/exp3.csv")
+      file = csvigo.load("exp2/exp_ReLU.csv")
       table.insert(file["ValidMSE"], validLoss)
       table.insert(file["SourceDomLossValid"], sourceDomCostValid)
       table.insert(file["TargetDomLossValid"], targetDomCostValid)
@@ -261,8 +265,9 @@ for i = 1,opt.maxEpoch do
       table.insert(file["HiddenUnits"], opt.hiddenLayerUnits)
       table.insert(file["LearningRate"], opt.learningRate)
       table.insert(file["MaxEpoch"], opt.maxEpoch)
-      csvigo.save("exp3/exp3.csv", file)
+      csvigo.save("exp2/exp_ReLU.csv", file)
    end
+
    -- file = csvigo.load("exp1/exp1.csv")
    -- if prevLoss > sourceTrainLoss then
    --    prevLoss = sourceTrainLoss
@@ -271,6 +276,7 @@ for i = 1,opt.maxEpoch do
    --    prevLoss = sourceTrainLoss
    --    opt.learningRate = opt.learningRate / 2
    -- end
+
    -- opt.learningRate = 0.1 / i
    -- opt.learningRate = 0.1 / math.sqrt(i)
    -- table.insert(file["ValidMSE"], validLoss)
