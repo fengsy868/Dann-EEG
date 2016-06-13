@@ -25,19 +25,16 @@ le résultat est prèsque même comme précédent.
 Exp2 est manipuler le structure de NN, notre structure est 56-n-56, donc on veut voir comment le performance de NN change avev nombre des neurones dans couche cachée.
 
 ![](https://cloud.githubusercontent.com/assets/3332561/16000061/1035bb6e-314a-11e6-8ba4-423911b2e57f.png)
-<center> Reconstruction loss per number of units D in a single hidden layer, with different values of λ.</center>
+<center> Reconstruction loss per number of units D in a single hidden layer, with different values of λ. Acquired after 200 epochs</center>
 
-Comme on voie, le Reconstruction loss ne dépend pas de hidden units number. et sur le rapport, si D est entre 47 et 56, c'est possible que le loss devient 0 sans reason. Mais je peut pas pu reprodu le résultat comme rapport, je pense mon résultat est plus logique.
+Cette fois le résultat devient bizzare, le MSE ne change pas avec hidden layer units différents, il reste comme un constant. Je ne comprends pas cet résultat, j'ai examiner mon programme et trouve pas les bugs... 
+
+Autrement, ça coute 12 heures pour exécuter cette programme (200 epoch * 56 units * 7 diff lambda). Si on veut calcule sur GPU, pour torch, il faut avoir un carte graphique Nvdia(rien dans le machine bureau, Intel carte dans mon Mac), donc je dois essayer d'installer les environnement dans mon machine chez moi.  
 
 
 ![](https://cloud.githubusercontent.com/assets/3332561/16000062/1035cbc2-314a-11e6-92cc-7b835e3d1584.png)
 <center> Domain classifier loss per number of units D in a single hidden layer, with different values of λ.</center>
-Le domain classifier loss est un constant pour D différents, mais pour le Domain Lambda de 10, le loss varie entre -1.9 et 55, ça est un phénomène bizarre.
-
-![](https://cloud.githubusercontent.com/assets/3332561/15705499/e772b500-27ef-11e6-8d15-8b2e836a181b.png)
-<center> reconstruction error et discrimination error en cas de lambda differents </center>
-
-Pour visualiser le front de pareto. 
+Le domain classifier loss est un constant pour D différents, cette fois il y a plus les valeurs négative. En plus, on peut bien voir que pour un lambda < 1, la perte de domaine est 1,38; pour le lambda > 1, la perte est toujour 27,63. Donc c'est bien de trouve un seuil que la perte de domaine reste grands. 
 
 Résumé de Siyao 25 mai
 ===================
