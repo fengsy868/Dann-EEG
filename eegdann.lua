@@ -78,7 +78,7 @@ featExtractor = nn.Sequential()
 featExtractor:add(nn.Linear(nInputEEG,opt.hiddenLayerUnits))
 -- featExtractor:add(nn.Sigmoid())
 -- featExtractor:add(nn.Linear(5,opt.hiddenLayerUnits))
-featExtractor:add(nn.ReLU())
+featExtractor:add(nn.Sigmoid())
 -- featExtractor:add(nn.Linear(5,5))
 
 -- Definition of the decoder
@@ -86,13 +86,13 @@ labelPredictor = nn.Sequential()
 labelPredictor:add(nn.Linear(opt.hiddenLayerUnits,nInputEEG))
 -- labelPredictor:add(nn.Sigmoid())
 -- labelPredictor:add(nn.Linear(5,nInputEEG))
-labelPredictor:add(nn.ReLU())
+labelPredictor:add(nn.Sigmoid())
 
 -- Definition of the domain classifier
 domainClassifier = nn.Sequential()
 domainClassifier:add(nn.GradientReversal(opt.domainLambda))
 domainClassifier:add(nn.Linear(opt.hiddenLayerUnits,1))
-domainClassifier:add(nn.ReLU())
+domainClassifier:add(nn.Sigmoid())
 -- domainClassifier:add(nn.LogSoftMax())
 
 
@@ -256,7 +256,7 @@ for i = 1,opt.maxEpoch do
    train()
 
    if i == opt.maxEpoch then
-      file = csvigo.load("exp2/exp_ReLU.csv")
+      file = csvigo.load("exp2/exp_1_20.csv")
       table.insert(file["ValidMSE"], validLoss)
       table.insert(file["SourceDomLossValid"], sourceDomCostValid)
       table.insert(file["TargetDomLossValid"], targetDomCostValid)
@@ -265,7 +265,7 @@ for i = 1,opt.maxEpoch do
       table.insert(file["HiddenUnits"], opt.hiddenLayerUnits)
       table.insert(file["LearningRate"], opt.learningRate)
       table.insert(file["MaxEpoch"], opt.maxEpoch)
-      csvigo.save("exp2/exp_ReLU.csv", file)
+      csvigo.save("exp2/exp_1_20.csv", file)
    end
 
    -- file = csvigo.load("exp1/exp1.csv")
