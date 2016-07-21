@@ -2,17 +2,41 @@
 
 cd .
 
-for ((j=1; j <= 20; j = j+1)) 
+s=1
+# for ((j=1; j <= 10000; j = j*10)) 
+# do
+# 	for ((i=1; i <= 56; i++))
+# 	do
+# 		for ((k=1; k <= 10; k++))
+# 		do
+# 			s=$(($s+1))
+# 			echo "$s"
+# 			th eegdann.lua -hiddenLayerUnits "$i" -domainLambda "$j" -tim "$k" -seed "$s"
+# 		done
+# 	done
+# done
+
+
+for ((i=1; i <= 56; i++))
 do
-	for ((i=1; i <= 56; i++))
+	for ((k=1; k <= 10; k++))
 	do
-		echo "$j"
-		th eegdann.lua -hiddenLayerUnits "$i" -domainLambda "$j"
+		s=$(($s+1))
+		echo "$s"
+		th eegdann.lua -hiddenLayerUnits "$i" -domainLambda 0.1 -tim "$k" -seed "$s"
 	done
 done
-
 # for ((i=1; i <= 56; i++))
 # do
 # 	echo "$i"
-# 	th eegdann.lua -hiddenLayerUnits "$i" -domainLambda 5000 -learningRate 1
+# 	th eegdann.lua -hiddenLayerUnits "$i" -domainLambda 100 -learningRate 1
+# done
+
+# for ((j=1; j <= 10; j = j+1)) 
+# do
+# 	for ((i=1; i <= 56; i++))
+# 	do
+# 		echo "$j"
+# 		th eegdann.lua -hiddenLayerUnits "$i" -domainLambda 100 -tim "$j"
+# 	done
 # done
